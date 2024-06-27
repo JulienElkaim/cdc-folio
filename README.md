@@ -14,8 +14,7 @@ _______________________
 **Portfolio CSV**: Find it in the folio-app's `resources/data` folder.  
 **Use another Portfolio**: use the property `portfolio.csv.resource.path` in `application.properties` file. CSV Portfolio should be in the resources folder.  
 **H2 Database**: Find it in the folio-app's `resources/data` folder.    
-**Feed new Data on App Start**: Use the `DatabaseFeeder` class provided to input data in DB, and support new securities.    
-**Market Pulse**: change the frequency of Market update received in folio-app's `application.properties` file.  
+**Feed new Data on App Start**: Use the `DatabaseFeeder` class provided to input data in DB, and support new securities.   
 **Market Pulse**: change the frequency of Market update received in folio-app's `application.properties` file. `market.pulsar.frequency.ms`  
 **Portfolio Updates**: change the refresh rate of your positions in the console in folio-app's `application.properties` file.  `portfolio.refresh.rate.ms`  
 **Risk Free Rate**: change the risk free rate in folio-app's `application.properties` file.  `reference.risk.free.rate`  
