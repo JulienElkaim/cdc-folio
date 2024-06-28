@@ -24,10 +24,7 @@ import com.crypto.folio.price.engine.impl.StockPriceResolver;
 import com.crypto.market.data.MarketDataProvider;
 import com.crypto.market.data.MarketDataService;
 import com.crypto.market.data.MarketDataServiceImpl;
-import com.crypto.market.data.mocked.BrownianMotionMarketPriceMocker;
-import com.crypto.market.data.mocked.MarketPriceGenerator;
-import com.crypto.market.data.mocked.MockMarketPulsar;
-import com.crypto.market.data.mocked.MockedMarketDataProvider;
+import com.crypto.market.data.mocked.*;
 import com.crypto.ref.data.InstrumentService;
 import com.crypto.ref.data.InstrumentStore;
 import com.crypto.ref.data.impl.InstrumentServiceImpl;
@@ -89,8 +86,9 @@ public class ServiceBeansConfig {
         }
 
         @Bean
-        public PortfolioStatePublisher portfolioStatePublisher(Printer printer) {
-            return new PortfolioStatePrintPublisher(printer);
+        public PortfolioStatePublisher portfolioStatePublisher(Printer printer,
+                                                               @Value("${portfolio.figures.decimal.precision}") int decimalPrecision) {
+            return new PortfolioStatePrintPublisher(printer, decimalPrecision);
         }
 
         @Bean
@@ -154,9 +152,10 @@ public class ServiceBeansConfig {
         @Bean
         MarketPriceGenerator priceGenerator(InstrumentService instrumentService,
                                             SystemClock systemClock) {
-            Map<String, BigDecimal> initialPricesMap = new HashMap<String, BigDecimal>() {{
-                put("APPL", BigDecimal.valueOf(209.35));
-                put("TESLA", BigDecimal.valueOf(185.52));
+            Instant timeReference = Instant.now();
+            Map<String, StockPriceSnapshot> initialPricesMap = new HashMap<String, StockPriceSnapshot>() {{
+                put("APPL", new StockPriceSnapshot("AAPL", BigDecimal.valueOf(209.35), timeReference));
+                put("TESLA", new StockPriceSnapshot("TESLA", BigDecimal.valueOf(185.52), timeReference));
             }};
 
             return new BrownianMotionMarketPriceMocker(
@@ -164,7 +163,7 @@ public class ServiceBeansConfig {
                     systemClock,
                     initialPricesMap,
                     BigDecimal.valueOf(130),
-                    Instant.now(),
+                    timeReference,
                     new Random()
             );
         }

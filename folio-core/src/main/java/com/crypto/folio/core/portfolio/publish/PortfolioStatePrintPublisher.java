@@ -8,15 +8,22 @@ import com.crypto.folio.core.portfolio.publish.print.Printer;
 import java.text.DecimalFormat;
 
 public class PortfolioStatePrintPublisher implements PortfolioStatePublisher {
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00");
     private static final int COLUMN_CHAR_SIZE = 20;
     private static final String lAlign = "%-" + COLUMN_CHAR_SIZE + "s";
     private static final String rAlign = "%" + COLUMN_CHAR_SIZE + "s";
 
     private final Printer printer;
+    private final DecimalFormat decimalFormat;
 
-    public PortfolioStatePrintPublisher(Printer printer) {
+
+    public PortfolioStatePrintPublisher(Printer printer, int decimalPrecision) {
         this.printer = printer;
+        StringBuilder stringBuilder = new StringBuilder("#,##0.");
+        for (int i = 0; i < decimalPrecision; i++) {
+            stringBuilder.append("0");
+        }
+
+        this.decimalFormat = new DecimalFormat(stringBuilder.toString());
     }
 
     @Override
@@ -48,16 +55,16 @@ public class PortfolioStatePrintPublisher implements PortfolioStatePublisher {
         for (PositionState positionState : portfolioState.getPositionStates()) {
             printer.printWithFormat(lAlign + rAlign + rAlign + rAlign + " %n",
                     positionState.getSymbol(),
-                    DECIMAL_FORMAT.format(positionState.getPrice()),
-                    DECIMAL_FORMAT.format(positionState.getQuantity()),
-                    DECIMAL_FORMAT.format(positionState.getMarketValue())
+                    decimalFormat.format(positionState.getPrice()),
+                    decimalFormat.format(positionState.getQuantity()),
+                    decimalFormat.format(positionState.getMarketValue())
             );
         }
         breakLine();
         String totalPrefix = "# Portfolio NAV: ";
         String alignRightSpaces = "%" + (COLUMN_CHAR_SIZE * columnNames.length - totalPrefix.length()) + "s";
         printer.printWithFormat(totalPrefix + alignRightSpaces,
-                DECIMAL_FORMAT.format(portfolioState.getPortfolioNav()));
+                decimalFormat.format(portfolioState.getPortfolioNav()));
     }
 
     private void breakLine() {

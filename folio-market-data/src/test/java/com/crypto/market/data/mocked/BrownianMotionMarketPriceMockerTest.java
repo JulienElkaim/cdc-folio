@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 public class BrownianMotionMarketPriceMockerTest {
     private final InstrumentService instrumentService = mock(InstrumentService.class);
     private final BigDecimal unsupportedStocksInitPrice = BigDecimal.TEN;
-    private final Map<String, BigDecimal> initialSpotPrices = new HashMap<String, BigDecimal>() {{
-        put("AAPL", BigDecimal.ONE);
-    }};
     private final Instant timeReference = Instant.EPOCH;
+    private final Map<String, StockPriceSnapshot> initialSpotPrices = new HashMap<String, StockPriceSnapshot>() {{
+        put("AAPL", new StockPriceSnapshot("AAPL", BigDecimal.ONE, timeReference));
+    }};
     private final SystemClock systemClock = mock(SystemClock.class);
     private final Random randomGen = mock(Random.class);
     private final StockDefinition stockDefinition = mock(StockDefinition.class);
@@ -62,6 +62,22 @@ public class BrownianMotionMarketPriceMockerTest {
         when(instrumentService.getDefinition(symbol)).thenReturn(mock(OptionDefinition.class));
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> mocker.generate(symbol));
         Assertions.assertEquals("Only stock is supported for MarketPriceMocker.", thrown.getMessage());
+    }
+
+    @Test
+    void generate_priceIsTimeSeries() {
+        BigDecimal firstPrice = mocker.generate(symbol);
+        Assertions.assertTrue(BigDecimal.valueOf(1.2281565641656154).compareTo(firstPrice) == 0);
+
+        Instant timeAtSecondPricing = systemClock.nowInstant();
+        when(systemClock.nowInstant()).thenReturn(timeAtSecondPricing.plusSeconds(100));
+        BigDecimal secondPrice = mocker.generate(symbol);
+        Assertions.assertTrue(BigDecimal.valueOf(1.2285291382008994).compareTo(secondPrice) == 0);
+
+        Instant timeAtThirdPricing = systemClock.nowInstant();
+        when(systemClock.nowInstant()).thenReturn(timeAtThirdPricing.plusSeconds(100));
+        BigDecimal thirdPrice = mocker.generate(symbol);
+        Assertions.assertTrue(BigDecimal.valueOf(1.2289017122361834).compareTo(thirdPrice) == 0);
     }
 
 }
