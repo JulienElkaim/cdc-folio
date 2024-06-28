@@ -39,8 +39,8 @@ public class DatabaseFeeder implements ApplicationRunner {
     }
 
     private static final List<StockDefinition> STOCKS_DEFINITIONS = new ArrayList<StockDefinition>() {{
-        add(new StockDefinition("AAPL", 0.4, 0.5));
-        add(new StockDefinition("TESLA", 0.25, 0.6));
+        add(new StockDefinition("AAPL", 0.2, 0.3));
+        add(new StockDefinition("TESLA", 0.15, 0.7));
     }};
 
     private static final List<OptionDefinition> OPTIONS_DEFINITIONS = new ArrayList<OptionDefinition>() {{

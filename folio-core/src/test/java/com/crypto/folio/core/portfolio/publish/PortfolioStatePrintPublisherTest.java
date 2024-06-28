@@ -17,7 +17,7 @@ import static org.mockito.Mockito.times;
 
 public class PortfolioStatePrintPublisherTest {
     private final Printer printer = mock(Printer.class);
-    private final PortfolioStatePrintPublisher portfolioStatePrintPublisher = new PortfolioStatePrintPublisher(printer);
+    private final PortfolioStatePrintPublisher portfolioStatePrintPublisher = new PortfolioStatePrintPublisher(printer, 2);
 
     @Test
     void printInExpectedFormat_priceChanged() {
